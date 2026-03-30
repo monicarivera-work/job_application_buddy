@@ -1,0 +1,77 @@
+// This is your Prisma schema file
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String        @id @default(uuid())
+  email        String        @unique
+  passwordHash String        @map("password_hash")
+  name         String
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @updatedAt @map("updated_at")
+  profile      UserProfile?
+  applications Application[]
+
+  @@map("users")
+}
+
+model UserProfile {
+  id          String   @id @default(uuid())
+  userId      String   @unique @map("user_id")
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  headline    String?
+  skills      String[]
+  resumeUrl   String?  @map("resume_url")
+  preferences Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("user_profiles")
+}
+
+model Job {
+  id           String        @id @default(uuid())
+  title        String
+  company      String
+  location     String?
+  description  String?
+  url          String        @unique
+  source       String
+  postedAt     DateTime?     @map("posted_at")
+  createdAt    DateTime      @default(now()) @map("created_at")
+  applications Application[]
+
+  @@map("jobs")
+}
+
+model Application {
+  id          String            @id @default(uuid())
+  userId      String            @map("user_id")
+  user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  jobId       String            @map("job_id")
+  job         Job               @relation(fields: [jobId], references: [id])
+  status      ApplicationStatus @default(PENDING)
+  matchScore  Float?            @map("match_score")
+  coverLetter String?           @map("cover_letter")
+  notes       String?
+  appliedAt   DateTime?         @map("applied_at")
+  createdAt   DateTime          @default(now()) @map("created_at")
+  updatedAt   DateTime          @updatedAt @map("updated_at")
+
+  @@unique([userId, jobId])
+  @@map("applications")
+}
+
+enum ApplicationStatus {
+  PENDING
+  APPROVED
+  SUBMITTED
+  REJECTED
+  WITHDRAWN
+}
