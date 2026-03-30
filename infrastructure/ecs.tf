@@ -12,6 +12,19 @@ resource "aws_secretsmanager_secret_version" "db_password" {
   secret_string = var.db_password
 }
 
+# Full DATABASE_URL secret – constructed after RDS address is known
+resource "aws_secretsmanager_secret" "database_url" {
+  name                    = "${var.app_name}/database-url"
+  recovery_window_in_days = 7
+
+  tags = { Environment = var.environment }
+}
+
+resource "aws_secretsmanager_secret_version" "database_url" {
+  secret_id     = aws_secretsmanager_secret.database_url.id
+  secret_string = "postgresql://${var.db_username}:${var.db_password}@${aws_db_instance.postgres.address}:5432/${var.db_name}"
+}
+
 resource "aws_secretsmanager_secret" "jwt_secret" {
   name                    = "${var.app_name}/jwt-secret"
   recovery_window_in_days = 7
@@ -103,7 +116,7 @@ resource "aws_iam_role_policy" "ecs_execution_secrets" {
         "secretsmanager:GetSecretValue",
       ]
       Resource = [
-        aws_secretsmanager_secret.db_password.arn,
+        aws_secretsmanager_secret.database_url.arn,
         aws_secretsmanager_secret.jwt_secret.arn,
       ]
     }]
@@ -144,8 +157,7 @@ resource "aws_ecs_cluster" "main" {
 # ── ECS Task Definition ───────────────────────────────────────────────────────
 
 locals {
-  image_uri    = var.container_image != "" ? var.container_image : "${aws_ecr_repository.app.repository_url}:latest"
-  db_host_url  = "postgresql://${var.db_username}@${aws_db_instance.postgres.address}:5432/${var.db_name}"
+  image_uri = var.container_image != "" ? var.container_image : "${aws_ecr_repository.app.repository_url}:latest"
 }
 
 resource "aws_ecs_task_definition" "app" {
@@ -170,7 +182,6 @@ resource "aws_ecs_task_definition" "app" {
       { name = "NODE_ENV",       value = "production" },
       { name = "PORT",           value = tostring(var.app_port) },
       { name = "JWT_EXPIRES_IN", value = "7d" },
-      { name = "DB_HOST_URL",    value = local.db_host_url },
     ]
 
     # Sensitive values injected from Secrets Manager at runtime
@@ -180,8 +191,8 @@ resource "aws_ecs_task_definition" "app" {
         valueFrom = aws_secretsmanager_secret.jwt_secret.arn
       },
       {
-        name      = "DB_PASSWORD"
-        valueFrom = aws_secretsmanager_secret.db_password.arn
+        name      = "DATABASE_URL"
+        valueFrom = aws_secretsmanager_secret.database_url.arn
       },
     ]
 

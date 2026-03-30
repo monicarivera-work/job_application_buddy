@@ -64,9 +64,18 @@ export async function createApplication(userId: string, jobId: string, data: { c
 }
 
 export async function updateApplicationStatus(userId: string, applicationId: string, status: ApplicationStatus) {
+  const existing = await prisma.application.findUnique({
+    where: { id: applicationId, userId },
+    select: { status: true },
+  });
+  const setAppliedAt =
+    status === ApplicationStatus.SUBMITTED && existing?.status !== ApplicationStatus.SUBMITTED
+      ? new Date()
+      : undefined;
+
   return prisma.application.update({
     where: { id: applicationId, userId },
-    data: { status, appliedAt: status === 'SUBMITTED' ? new Date() : undefined },
+    data: { status, ...(setAppliedAt ? { appliedAt: setAppliedAt } : {}) },
     include: { job: true },
   });
 }
