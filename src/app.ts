@@ -28,6 +28,13 @@ const apiLimiter = rateLimit({
   message: { error: 'Too many requests, please try again later' },
 });
 
+const staticLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 500,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 // Serve static files from public directory
 app.use(express.static(path.join(__dirname, '..', 'public')));
 
@@ -41,7 +48,7 @@ app.get('/health', (_req, res) => {
 });
 
 // Catch-all: serve frontend for all non-API routes
-app.get('*', (_req, res) => {
+app.get('*', staticLimiter, (_req, res) => {
   res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
 });
 
