@@ -1,10 +1,8 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { PrismaClient } from '@prisma/client';
 import { config } from '../config';
 import { JwtPayload } from '../middleware/authMiddleware';
-
-const prisma = new PrismaClient();
+import prisma from '../lib/prisma';
 
 export interface RegisterInput {
   email: string;

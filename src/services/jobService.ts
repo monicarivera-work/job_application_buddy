@@ -1,6 +1,5 @@
-import { PrismaClient, ApplicationStatus } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { ApplicationStatus } from '@prisma/client';
+import prisma from '../lib/prisma';
 
 export interface JobSearchResult {
   id: string;

@@ -1,3 +1,29 @@
+# ── Secrets Manager ───────────────────────────────────────────────────────────
+
+resource "aws_secretsmanager_secret" "db_password" {
+  name                    = "${var.app_name}/db-password"
+  recovery_window_in_days = 7
+
+  tags = { Environment = var.environment }
+}
+
+resource "aws_secretsmanager_secret_version" "db_password" {
+  secret_id     = aws_secretsmanager_secret.db_password.id
+  secret_string = var.db_password
+}
+
+resource "aws_secretsmanager_secret" "jwt_secret" {
+  name                    = "${var.app_name}/jwt-secret"
+  recovery_window_in_days = 7
+
+  tags = { Environment = var.environment }
+}
+
+resource "aws_secretsmanager_secret_version" "jwt_secret" {
+  secret_id     = aws_secretsmanager_secret.jwt_secret.id
+  secret_string = var.jwt_secret
+}
+
 # ── ECR Repository ────────────────────────────────────────────────────────────
 
 resource "aws_ecr_repository" "app" {
@@ -65,6 +91,25 @@ resource "aws_iam_role_policy_attachment" "ecs_execution" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
+resource "aws_iam_role_policy" "ecs_execution_secrets" {
+  name = "${var.app_name}-secrets-policy"
+  role = aws_iam_role.ecs_task_execution.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect = "Allow"
+      Action = [
+        "secretsmanager:GetSecretValue",
+      ]
+      Resource = [
+        aws_secretsmanager_secret.db_password.arn,
+        aws_secretsmanager_secret.jwt_secret.arn,
+      ]
+    }]
+  })
+}
+
 resource "aws_iam_role" "ecs_task" {
   name = "${var.app_name}-ecs-task-role"
 
@@ -99,8 +144,8 @@ resource "aws_ecs_cluster" "main" {
 # ── ECS Task Definition ───────────────────────────────────────────────────────
 
 locals {
-  image_uri = var.container_image != "" ? var.container_image : "${aws_ecr_repository.app.repository_url}:latest"
-  database_url = "postgresql://${var.db_username}:${var.db_password}@${aws_db_instance.postgres.address}:5432/${var.db_name}"
+  image_uri    = var.container_image != "" ? var.container_image : "${aws_ecr_repository.app.repository_url}:latest"
+  db_host_url  = "postgresql://${var.db_username}@${aws_db_instance.postgres.address}:5432/${var.db_name}"
 }
 
 resource "aws_ecs_task_definition" "app" {
@@ -122,11 +167,22 @@ resource "aws_ecs_task_definition" "app" {
     }]
 
     environment = [
-      { name = "NODE_ENV",      value = "production" },
-      { name = "PORT",          value = tostring(var.app_port) },
-      { name = "DATABASE_URL",  value = local.database_url },
-      { name = "JWT_SECRET",    value = var.jwt_secret },
+      { name = "NODE_ENV",       value = "production" },
+      { name = "PORT",           value = tostring(var.app_port) },
       { name = "JWT_EXPIRES_IN", value = "7d" },
+      { name = "DB_HOST_URL",    value = local.db_host_url },
+    ]
+
+    # Sensitive values injected from Secrets Manager at runtime
+    secrets = [
+      {
+        name      = "JWT_SECRET"
+        valueFrom = aws_secretsmanager_secret.jwt_secret.arn
+      },
+      {
+        name      = "DB_PASSWORD"
+        valueFrom = aws_secretsmanager_secret.db_password.arn
+      },
     ]
 
     logConfiguration = {
