@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { NextFunction, Request, Response } from 'express';
 import http from 'http';
 import { config } from '../../config';
 import { profileRoutes } from './routes/profileRoutes';
@@ -15,6 +15,17 @@ app.use('/api/applications', applicationRoutes);
 /** Health-check endpoint */
 app.get('/health', (_req, res) => {
   res.json({ status: 'ok' });
+});
+
+/**
+ * Global error-handling middleware.
+ * Catches any error thrown (or passed via next(err)) in route handlers
+ * and returns a structured JSON response instead of crashing the server.
+ */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
+  console.error('Unhandled error:', err.message);
+  res.status(500).json({ error: 'Internal server error', message: err.message });
 });
 
 const server = http.createServer(app);
