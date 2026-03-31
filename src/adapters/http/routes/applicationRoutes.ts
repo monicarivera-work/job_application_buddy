@@ -3,19 +3,22 @@ import { profileService } from '../../../services/profileService';
 import { applicationOrchestrator } from '../../../services/applicationOrchestrator';
 import { applicationRepo } from '../../persistence/applicationRepo';
 import { MatchedJob } from '../../../domain/job';
+import { logAuditEvent } from '../../../services/auditLogger';
+import { AuthRequest } from '../middleware/authMiddleware';
 
 export const applicationRoutes = Router();
 
 /**
  * POST /api/applications/plan
  * Builds a draft application plan for a matched job.
- * Body: { userId: string, job: MatchedJob }
+ * Body: { job: MatchedJob }
  */
-applicationRoutes.post('/plan', async (req: Request, res: Response) => {
-  const { userId, job } = req.body as { userId: string; job: MatchedJob };
+applicationRoutes.post('/plan', async (req: AuthRequest, res: Response) => {
+  const { job } = req.body as { job: MatchedJob };
+  const userId = req.userId!;
 
-  if (!userId || !job || !job.title?.trim() || !job.company?.trim() || !job.applyUrl?.trim()) {
-    res.status(400).json({ error: 'userId and a valid job (with title, company, applyUrl) are required' });
+  if (!job || !job.title?.trim() || !job.company?.trim() || !job.applyUrl?.trim()) {
+    res.status(400).json({ error: 'A valid job (with title, company, applyUrl) is required' });
     return;
   }
 
@@ -26,23 +29,24 @@ applicationRoutes.post('/plan', async (req: Request, res: Response) => {
   }
 
   const plan = await applicationOrchestrator.buildApplicationPlan(profile, job);
+  logAuditEvent('application_plan_created', { userId, resource: 'POST /api/applications/plan', success: true, ip: req.ip });
   res.json(plan);
 });
 
 /**
  * POST /api/applications/submit
  * Submits an approved application plan.
- * Body: { userId: string, plan: ApplicationPlan, files?: Record<string, string> }
+ * Body: { plan: ApplicationPlan, files?: Record<string, string> }
  */
-applicationRoutes.post('/submit', async (req: Request, res: Response) => {
-  const { userId, plan, files = {} } = req.body as {
-    userId: string;
+applicationRoutes.post('/submit', async (req: AuthRequest, res: Response) => {
+  const { plan, files = {} } = req.body as {
     plan: Parameters<typeof applicationOrchestrator.submitApprovedApplication>[1];
     files?: Record<string, string>;
   };
+  const userId = req.userId!;
 
-  if (!userId || !plan) {
-    res.status(400).json({ error: 'userId and plan are required' });
+  if (!plan) {
+    res.status(400).json({ error: 'plan is required' });
     return;
   }
 
@@ -53,30 +57,28 @@ applicationRoutes.post('/submit', async (req: Request, res: Response) => {
   }
 
   await applicationOrchestrator.submitApprovedApplication(profile, plan, files);
+  logAuditEvent('application_submitted', { userId, resource: 'POST /api/applications/submit', success: true, ip: req.ip });
   res.json({ message: 'Application submitted successfully' });
 });
 
 /**
- * GET /api/applications?userId=<id>
- * Returns the application history for the given user.
+ * GET /api/applications
+ * Returns the application history for the authenticated user.
  */
-applicationRoutes.get('/', async (req: Request, res: Response) => {
-  const userId = req.query.userId as string | undefined;
-  if (!userId) {
-    res.status(400).json({ error: 'userId query parameter is required' });
-    return;
-  }
-
+applicationRoutes.get('/', async (req: AuthRequest, res: Response) => {
+  const userId = req.userId!;
   const records = await applicationRepo.listByUser(userId);
+  logAuditEvent('applications_listed', { userId, resource: 'GET /api/applications', success: true, ip: req.ip, details: { count: records.length } });
   res.json(records);
 });
 
 /**
  * PATCH /api/applications/:id/status
- * Updates the status of an application.
+ * Updates the status of an application owned by the authenticated user.
  * Body: { status: ApplicationStatus, notes?: string }
  */
-applicationRoutes.patch('/:id/status', async (req: Request, res: Response) => {
+applicationRoutes.patch('/:id/status', async (req: AuthRequest, res: Response) => {
+  const userId = req.userId!;
   const { status, notes } = req.body as {
     status: Parameters<typeof applicationRepo.updateStatus>[1];
     notes?: string;
@@ -87,11 +89,18 @@ applicationRoutes.patch('/:id/status', async (req: Request, res: Response) => {
     return;
   }
 
-  const updated = await applicationRepo.updateStatus(req.params.id, status, notes);
-  if (!updated) {
+  const existing = await applicationRepo.findById(req.params.id);
+  if (!existing) {
     res.status(404).json({ error: 'Application not found' });
     return;
   }
+  if (existing.userId !== userId) {
+    logAuditEvent('unauthorized_access_attempt', { userId, resource: `PATCH /api/applications/${req.params.id}/status`, success: false, ip: req.ip, details: { reason: 'forbidden_application_update' } });
+    res.status(403).json({ error: 'Forbidden: you may only update your own applications' });
+    return;
+  }
 
+  const updated = await applicationRepo.updateStatus(req.params.id, status, notes);
+  logAuditEvent('application_status_updated', { userId, resource: `PATCH /api/applications/${req.params.id}/status`, success: true, ip: req.ip, details: { applicationId: req.params.id, status } });
   res.json(updated);
 });

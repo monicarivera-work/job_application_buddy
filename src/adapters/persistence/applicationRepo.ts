@@ -33,4 +33,15 @@ export const applicationRepo = {
     if (notes !== undefined) record.notes = notes;
     return record;
   },
+
+  async deleteByUser(userId: string): Promise<number> {
+    let count = 0;
+    for (const [id, record] of store.entries()) {
+      if (record.userId === userId) {
+        store.delete(id);
+        count++;
+      }
+    }
+    return count;
+  },
 };

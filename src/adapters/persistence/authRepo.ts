@@ -27,4 +27,8 @@ export const authRepo = {
       creds.resumeFileUrl = url;
     }
   },
+
+  async delete(id: string): Promise<boolean> {
+    return store.delete(id);
+  },
 };
