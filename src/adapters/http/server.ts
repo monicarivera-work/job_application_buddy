@@ -1,5 +1,6 @@
 import express from 'express';
 import http from 'http';
+import path from 'path';
 import { config } from '../../config';
 import { profileRoutes } from './routes/profileRoutes';
 import { jobRoutes } from './routes/jobRoutes';
@@ -7,6 +8,9 @@ import { applicationRoutes } from './routes/applicationRoutes';
 
 const app = express();
 app.use(express.json());
+
+/** Serve static frontend from public/ */
+app.use(express.static(path.join(__dirname, '../../../public')));
 
 app.use('/api/profile', profileRoutes);
 app.use('/api/jobs', jobRoutes);
