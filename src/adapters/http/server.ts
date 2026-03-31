@@ -1,10 +1,13 @@
 import express from 'express';
 import http from 'http';
 import path from 'path';
+import rateLimit from 'express-rate-limit';
 import { config } from '../../config';
 import { profileRoutes } from './routes/profileRoutes';
 import { jobRoutes } from './routes/jobRoutes';
 import { applicationRoutes } from './routes/applicationRoutes';
+import { authRoutes } from './routes/authRoutes';
+import { requireAuth } from './middleware/authMiddleware';
 
 const app = express();
 app.use(express.json());
@@ -12,9 +15,31 @@ app.use(express.json());
 /** Serve static frontend from public/ */
 app.use(express.static(path.join(__dirname, '../../../public')));
 
-app.use('/api/profile', profileRoutes);
-app.use('/api/jobs', jobRoutes);
-app.use('/api/applications', applicationRoutes);
+/** Rate-limit authentication endpoints to mitigate brute-force attacks */
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many requests, please try again later.' },
+});
+
+/** General rate limit for all API routes */
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 300,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many requests, please try again later.' },
+});
+
+/** Public auth endpoints (no JWT required) */
+app.use('/api/auth', authLimiter, authRoutes);
+
+/** All remaining API routes require a valid JWT */
+app.use('/api/profile', apiLimiter, requireAuth, profileRoutes);
+app.use('/api/jobs', apiLimiter, requireAuth, jobRoutes);
+app.use('/api/applications', apiLimiter, requireAuth, applicationRoutes);
 
 /** Health-check endpoint */
 app.get('/health', (_req, res) => {
