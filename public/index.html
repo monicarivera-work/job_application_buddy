@@ -18,11 +18,14 @@
       padding: 1rem 2rem;
       display: flex;
       align-items: center;
+      justify-content: space-between;
       gap: 0.75rem;
       box-shadow: 0 2px 4px rgba(0,0,0,0.2);
     }
     header h1 { font-size: 1.5rem; }
     header .subtitle { font-size: 0.875rem; opacity: 0.85; }
+    .header-user { display: flex; align-items: center; gap: 0.75rem; font-size: 0.875rem; }
+    .header-user span { opacity: 0.9; }
     nav {
       background: #1a365d;
       display: flex;
@@ -77,6 +80,8 @@
     .btn-secondary:hover { background: #cbd5e0; }
     .btn-success { background: #276749; color: white; }
     .btn-success:hover { background: #22543d; }
+    .btn-danger { background: #c53030; color: white; }
+    .btn-danger:hover { background: #9b2c2c; }
     .alert {
       padding: 0.75rem 1rem;
       border-radius: 6px;
@@ -148,122 +153,319 @@
       padding: 0.15rem 0.5rem;
       font-size: 0.75rem;
     }
+
+    /* ── Auth screens ── */
+    #auth-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #1a365d 0%, #2b6cb0 100%);
+    }
+    .auth-box {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+      padding: 2rem 2.5rem;
+      width: 100%;
+      max-width: 420px;
+    }
+    .auth-box h2 {
+      font-size: 1.4rem;
+      color: #2b6cb0;
+      margin-bottom: 0.25rem;
+    }
+    .auth-box .auth-sub { font-size: 0.85rem; color: #718096; margin-bottom: 1.25rem; }
+    .auth-tabs { display: flex; gap: 0; border-bottom: 2px solid #e2e8f0; margin-bottom: 1.5rem; }
+    .auth-tab {
+      background: none;
+      border: none;
+      padding: 0.6rem 1.25rem;
+      cursor: pointer;
+      font-size: 0.9rem;
+      color: #718096;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      transition: color 0.2s;
+    }
+    .auth-tab.active { color: #2b6cb0; border-bottom-color: #2b6cb0; font-weight: 600; }
+    .auth-tab:hover { color: #2b6cb0; }
+    .auth-form { display: none; }
+    .auth-form.active { display: block; }
+    .auth-form label { margin-top: 0.9rem; }
+    .auth-form .btn { width: 100%; text-align: center; margin-top: 1.25rem; padding: 0.65rem; font-size: 1rem; }
+    .auth-switch { text-align: center; margin-top: 1rem; font-size: 0.85rem; color: #718096; }
+    .auth-switch a { color: #2b6cb0; cursor: pointer; text-decoration: underline; }
+    .file-hint { font-size: 0.78rem; color: #a0aec0; margin-top: 0.3rem; }
+    #app-screen { display: none; }
   </style>
 </head>
 <body>
 
-<header>
-  <div>
-    <h1>🤝 Job Application Buddy</h1>
-    <div class="subtitle">Automate your job search &amp; applications</div>
-  </div>
-</header>
+<!-- ═══════════════════════════════════════ AUTH SCREEN ═══════════════════════════════════════ -->
+<div id="auth-screen">
+  <div class="auth-box">
+    <h2>🤝 Job Application Buddy</h2>
+    <p class="auth-sub">Automate your job search &amp; applications</p>
 
-<nav>
-  <button class="active" onclick="showTab('profile', event)">👤 My Profile</button>
-  <button onclick="showTab('jobs', event)">🔍 Job Matches</button>
-  <button onclick="showTab('applications', event)">📋 Applications</button>
-</nav>
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tab-login-btn" onclick="switchAuthTab('login')">Log In</button>
+      <button class="auth-tab" id="tab-register-btn" onclick="switchAuthTab('register')">Create Account</button>
+    </div>
 
-<div class="container">
+    <!-- LOGIN FORM -->
+    <div id="auth-login" class="auth-form active">
+      <div id="login-msg"></div>
+      <label for="login-email">Email</label>
+      <input type="email" id="login-email" placeholder="you@example.com" autocomplete="email" />
+      <label for="login-password">Password</label>
+      <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password" />
+      <button class="btn btn-primary" onclick="doLogin()">Log In</button>
+    </div>
 
-  <!-- PROFILE TAB -->
-  <div id="tab-profile" class="section active">
-    <div class="card">
-      <h2>Your Profile</h2>
-      <div id="profile-msg"></div>
-      <label>User ID <small style="color:#718096">(used to look up your data)</small></label>
-      <div class="inline-row">
-        <input type="text" id="profile-id" placeholder="e.g. user-1" />
-        <button class="btn btn-secondary" onclick="loadProfile()">Load</button>
-      </div>
-      <label>Full Name</label>
-      <input type="text" id="profile-name" placeholder="Jane Smith" />
-      <label>Email</label>
-      <input type="email" id="profile-email" placeholder="jane@example.com" />
-      <label>Desired Job Titles <small style="color:#718096">(comma-separated)</small></label>
-      <input type="text" id="profile-titles" placeholder="Software Engineer, Backend Developer" />
-      <label>Preferred Locations <small style="color:#718096">(comma-separated, or "remote")</small></label>
-      <input type="text" id="profile-locations" placeholder="Remote, San Francisco, New York" />
-      <label>Tech Stack / Skills <small style="color:#718096">(comma-separated)</small></label>
-      <input type="text" id="profile-skills" placeholder="TypeScript, Node.js, React, PostgreSQL" />
-      <label>Min Salary (USD/yr)</label>
-      <input type="number" id="profile-salary" placeholder="100000" />
-      <label>Open to Remote?</label>
-      <select id="profile-remote">
-        <option value="true">Yes</option>
-        <option value="false">No</option>
-      </select>
-      <label>Resume Text</label>
-      <textarea id="profile-resume" placeholder="Paste your resume here…"></textarea>
-      <button class="btn btn-primary" onclick="saveProfile()">💾 Save Profile</button>
+    <!-- CREATE ACCOUNT FORM -->
+    <div id="auth-register" class="auth-form">
+      <div id="register-msg"></div>
+      <label for="reg-name">Full Name</label>
+      <input type="text" id="reg-name" placeholder="Jane Smith" autocomplete="name" />
+      <label for="reg-email">Email</label>
+      <input type="email" id="reg-email" placeholder="you@example.com" autocomplete="email" />
+      <label for="reg-password">Password <small style="color:#a0aec0">(min 8 chars)</small></label>
+      <input type="password" id="reg-password" placeholder="••••••••" autocomplete="new-password" />
+      <label for="reg-resume">Resume File <small style="color:#a0aec0">(optional)</small></label>
+      <input type="file" id="reg-resume" accept=".pdf,.doc,.docx,.txt" />
+      <p class="file-hint">Accepted formats: PDF, DOC, DOCX, TXT · Max 10 MB</p>
+      <button class="btn btn-primary" onclick="doRegister()">Create Account</button>
     </div>
   </div>
-
-  <!-- JOBS TAB -->
-  <div id="tab-jobs" class="section">
-    <div class="card">
-      <h2>Discover &amp; Rank Jobs</h2>
-      <div class="inline-row">
-        <div>
-          <label>User ID</label>
-          <input type="text" id="jobs-user-id" placeholder="e.g. user-1" />
-        </div>
-        <button class="btn btn-primary" onclick="discoverJobs()">🔍 Find Matches</button>
-      </div>
-      <div id="jobs-msg"></div>
-    </div>
-    <ul class="job-list" id="job-list"></ul>
-  </div>
-
-  <!-- APPLICATIONS TAB -->
-  <div id="tab-applications" class="section">
-    <div class="card">
-      <h2>Application History</h2>
-      <div class="inline-row">
-        <div>
-          <label>User ID</label>
-          <input type="text" id="apps-user-id" placeholder="e.g. user-1" />
-        </div>
-        <button class="btn btn-primary" onclick="loadApplications()">📋 Load Applications</button>
-      </div>
-      <div id="apps-msg"></div>
-    </div>
-    <ul class="app-list" id="app-list"></ul>
-  </div>
-
 </div>
 
-<script>
-  const API = '';  // same origin
+<!-- ═══════════════════════════════════════ APP SCREEN ════════════════════════════════════════ -->
+<div id="app-screen">
 
+  <header>
+    <div>
+      <h1>🤝 Job Application Buddy</h1>
+      <div class="subtitle">Automate your job search &amp; applications</div>
+    </div>
+    <div class="header-user">
+      <span id="header-username"></span>
+      <button class="btn btn-danger" style="margin-top:0;padding:0.35rem 0.9rem;font-size:0.8rem" onclick="doLogout()">Log Out</button>
+    </div>
+  </header>
+
+  <nav>
+    <button class="active" onclick="showTab('profile', event)">👤 My Profile</button>
+    <button onclick="showTab('jobs', event)">🔍 Job Matches</button>
+    <button onclick="showTab('applications', event)">📋 Applications</button>
+  </nav>
+
+  <div class="container">
+
+    <!-- PROFILE TAB -->
+    <div id="tab-profile" class="section active">
+      <div class="card">
+        <h2>Your Profile</h2>
+        <div id="profile-msg"></div>
+        <label>Full Name</label>
+        <input type="text" id="profile-name" placeholder="Jane Smith" />
+        <label>Email</label>
+        <input type="email" id="profile-email" placeholder="jane@example.com" />
+        <label>Desired Job Titles <small style="color:#718096">(comma-separated)</small></label>
+        <input type="text" id="profile-titles" placeholder="Software Engineer, Backend Developer" />
+        <label>Preferred Locations <small style="color:#718096">(comma-separated, or "remote")</small></label>
+        <input type="text" id="profile-locations" placeholder="Remote, San Francisco, New York" />
+        <label>Tech Stack / Skills <small style="color:#718096">(comma-separated)</small></label>
+        <input type="text" id="profile-skills" placeholder="TypeScript, Node.js, React, PostgreSQL" />
+        <label>Min Salary (USD/yr)</label>
+        <input type="number" id="profile-salary" placeholder="100000" />
+        <label>Open to Remote?</label>
+        <select id="profile-remote">
+          <option value="true">Yes</option>
+          <option value="false">No</option>
+        </select>
+        <label>Resume Text</label>
+        <textarea id="profile-resume" placeholder="Paste your resume here…"></textarea>
+        <div style="display:flex;gap:0.75rem;flex-wrap:wrap">
+          <button class="btn btn-secondary" onclick="loadProfile()">🔄 Load Saved Profile</button>
+          <button class="btn btn-primary" onclick="saveProfile()">💾 Save Profile</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- JOBS TAB -->
+    <div id="tab-jobs" class="section">
+      <div class="card">
+        <h2>Discover &amp; Rank Jobs</h2>
+        <button class="btn btn-primary" onclick="discoverJobs()">🔍 Find Matches</button>
+        <div id="jobs-msg"></div>
+      </div>
+      <ul class="job-list" id="job-list"></ul>
+    </div>
+
+    <!-- APPLICATIONS TAB -->
+    <div id="tab-applications" class="section">
+      <div class="card">
+        <h2>Application History</h2>
+        <button class="btn btn-primary" onclick="loadApplications()">📋 Load Applications</button>
+        <div id="apps-msg"></div>
+      </div>
+      <ul class="app-list" id="app-list"></ul>
+    </div>
+
+  </div><!-- /.container -->
+</div><!-- /#app-screen -->
+
+<script>
+  /* ── auth state ── */
+  let _token = null;
+  let _userId = null;
+  let _userName = null;
+
+  function getToken() { return _token; }
+
+  function authHeaders(extra) {
+    return Object.assign({ 'Authorization': 'Bearer ' + _token }, extra || {});
+  }
+
+  /* ── startup: check localStorage ── */
+  (function init() {
+    const stored = localStorage.getItem('jab_session');
+    if (stored) {
+      try {
+        const s = JSON.parse(stored);
+        _token = s.token;
+        _userId = s.userId;
+        _userName = s.name;
+        showApp();
+      } catch (_) {
+        localStorage.removeItem('jab_session');
+      }
+    }
+  })();
+
+  /* ── auth tab switching ── */
+  function switchAuthTab(tab) {
+    document.getElementById('auth-login').classList.toggle('active', tab === 'login');
+    document.getElementById('auth-register').classList.toggle('active', tab === 'register');
+    document.getElementById('tab-login-btn').classList.toggle('active', tab === 'login');
+    document.getElementById('tab-register-btn').classList.toggle('active', tab === 'register');
+  }
+
+  /* ── login ── */
+  async function doLogin() {
+    const email = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value;
+    if (!email || !password) {
+      msg('login-msg', 'Email and password are required.', 'error'); return;
+    }
+    msg('login-msg', '<span class="spinner"></span> Logging in…', 'info');
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await res.json();
+      if (!res.ok) { msg('login-msg', esc(data.error || 'Login failed'), 'error'); return; }
+      startSession(data);
+    } catch (e) {
+      msg('login-msg', 'Network error: ' + esc(e.message), 'error');
+    }
+  }
+
+  /* ── register ── */
+  async function doRegister() {
+    const name = document.getElementById('reg-name').value.trim();
+    const email = document.getElementById('reg-email').value.trim();
+    const password = document.getElementById('reg-password').value;
+    const fileInput = document.getElementById('reg-resume');
+    if (!name || !email || !password) {
+      msg('register-msg', 'Name, email, and password are required.', 'error'); return;
+    }
+    if (password.length < 8) {
+      msg('register-msg', 'Password must be at least 8 characters.', 'error'); return;
+    }
+    msg('register-msg', '<span class="spinner"></span> Creating account…', 'info');
+    try {
+      const form = new FormData();
+      form.append('name', name);
+      form.append('email', email);
+      form.append('password', password);
+      if (fileInput.files.length > 0) {
+        form.append('resume', fileInput.files[0]);
+      }
+      const res = await fetch('/api/auth/register', { method: 'POST', body: form });
+      const data = await res.json();
+      if (!res.ok) { msg('register-msg', esc(data.error || 'Registration failed'), 'error'); return; }
+      startSession(data);
+    } catch (e) {
+      msg('register-msg', 'Network error: ' + esc(e.message), 'error');
+    }
+  }
+
+  /* ── session helpers ── */
+  function startSession(data) {
+    _token = data.token;
+    _userId = data.userId;
+    _userName = data.name;
+    localStorage.setItem('jab_session', JSON.stringify({ token: _token, userId: _userId, name: _userName }));
+    showApp();
+  }
+
+  function showApp() {
+    document.getElementById('auth-screen').style.display = 'none';
+    document.getElementById('app-screen').style.display = 'block';
+    document.getElementById('header-username').textContent = '👤 ' + (_userName || '');
+    // Pre-fill profile name/email from account info if no saved profile
+    if (_userName) document.getElementById('profile-name').value = _userName;
+  }
+
+  function doLogout() {
+    _token = null; _userId = null; _userName = null;
+    localStorage.removeItem('jab_session');
+    document.getElementById('auth-screen').style.display = '';
+    document.getElementById('app-screen').style.display = 'none';
+    document.getElementById('login-email').value = '';
+    document.getElementById('login-password').value = '';
+    document.getElementById('login-msg').innerHTML = '';
+  }
+
+  /* ── tab navigation (app) ── */
   function showTab(name, event) {
-    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('#app-screen .section').forEach(s => s.classList.remove('active'));
     document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
     document.getElementById('tab-' + name).classList.add('active');
     event.target.classList.add('active');
   }
 
+  /* ── UI helpers ── */
   function msg(elId, text, type) {
     const el = document.getElementById(elId);
     el.innerHTML = `<div class="alert alert-${type}">${text}</div>`;
   }
-
   function loading(elId) {
     const el = document.getElementById(elId);
     el.innerHTML = `<div class="alert alert-info"><span class="spinner"></span> Loading…</div>`;
   }
+  function esc(str) {
+    const d = document.createElement('div');
+    d.textContent = str || '';
+    return d.innerHTML;
+  }
+  function csv(str) {
+    return str.split(',').map(s => s.trim()).filter(Boolean);
+  }
 
+  /* ── profile ── */
   async function saveProfile() {
-    const id = document.getElementById('profile-id').value.trim();
     const name = document.getElementById('profile-name').value.trim();
     const email = document.getElementById('profile-email').value.trim();
-    if (!id || !name || !email) {
-      msg('profile-msg', 'User ID, Name, and Email are required.', 'error');
-      return;
+    if (!name || !email) {
+      msg('profile-msg', 'Name and Email are required.', 'error'); return;
     }
     const body = {
-      id,
+      id: _userId,
       name,
       email,
       preferences: {
@@ -276,28 +478,30 @@
       resumeText: document.getElementById('profile-resume').value,
     };
     try {
-      const res = await fetch(API + '/api/profile', {
+      const res = await fetch('/api/profile', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: authHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify(body),
       });
       if (!res.ok) {
         const err = await res.json();
-        msg('profile-msg', 'Error: ' + (err.error || res.statusText), 'error');
+        if (res.status === 401) { doLogout(); return; }
+        msg('profile-msg', 'Error: ' + esc(err.error || res.statusText), 'error');
       } else {
         msg('profile-msg', '✅ Profile saved successfully!', 'success');
       }
     } catch (e) {
-      msg('profile-msg', 'Network error: ' + e.message, 'error');
+      msg('profile-msg', 'Network error: ' + esc(e.message), 'error');
     }
   }
 
   async function loadProfile() {
-    const id = document.getElementById('profile-id').value.trim();
-    if (!id) { msg('profile-msg', 'Enter a User ID first.', 'error'); return; }
     loading('profile-msg');
     try {
-      const res = await fetch(API + '/api/profile/' + encodeURIComponent(id));
+      const res = await fetch('/api/profile/' + encodeURIComponent(_userId), {
+        headers: authHeaders(),
+      });
+      if (res.status === 401) { doLogout(); return; }
       if (!res.ok) { msg('profile-msg', 'Profile not found.', 'error'); return; }
       const p = await res.json();
       document.getElementById('profile-name').value = p.name || '';
@@ -310,21 +514,22 @@
       document.getElementById('profile-resume').value = p.resumeText || '';
       msg('profile-msg', '✅ Profile loaded.', 'success');
     } catch (e) {
-      msg('profile-msg', 'Network error: ' + e.message, 'error');
+      msg('profile-msg', 'Network error: ' + esc(e.message), 'error');
     }
   }
 
+  /* ── jobs ── */
   async function discoverJobs() {
-    const userId = document.getElementById('jobs-user-id').value.trim();
-    if (!userId) { msg('jobs-msg', 'Enter a User ID first.', 'error'); return; }
     loading('jobs-msg');
     document.getElementById('job-list').innerHTML = '';
     try {
-      const res = await fetch(API + '/api/jobs?userId=' + encodeURIComponent(userId));
+      const res = await fetch('/api/jobs?userId=' + encodeURIComponent(_userId), {
+        headers: authHeaders(),
+      });
+      if (res.status === 401) { doLogout(); return; }
       if (!res.ok) {
         const err = await res.json();
-        msg('jobs-msg', 'Error: ' + (err.error || res.statusText), 'error');
-        return;
+        msg('jobs-msg', 'Error: ' + esc(err.error || res.statusText), 'error'); return;
       }
       const jobs = await res.json();
       msg('jobs-msg', `Found ${jobs.length} matching job(s).`, 'success');
@@ -348,21 +553,22 @@
           </li>`;
       });
     } catch (e) {
-      msg('jobs-msg', 'Network error: ' + e.message, 'error');
+      msg('jobs-msg', 'Network error: ' + esc(e.message), 'error');
     }
   }
 
+  /* ── applications ── */
   async function loadApplications() {
-    const userId = document.getElementById('apps-user-id').value.trim();
-    if (!userId) { msg('apps-msg', 'Enter a User ID first.', 'error'); return; }
     loading('apps-msg');
     document.getElementById('app-list').innerHTML = '';
     try {
-      const res = await fetch(API + '/api/applications?userId=' + encodeURIComponent(userId));
+      const res = await fetch('/api/applications?userId=' + encodeURIComponent(_userId), {
+        headers: authHeaders(),
+      });
+      if (res.status === 401) { doLogout(); return; }
       if (!res.ok) {
         const err = await res.json();
-        msg('apps-msg', 'Error: ' + (err.error || res.statusText), 'error');
-        return;
+        msg('apps-msg', 'Error: ' + esc(err.error || res.statusText), 'error'); return;
       }
       const apps = await res.json();
       msg('apps-msg', `Found ${apps.length} application(s).`, 'success');
@@ -383,18 +589,8 @@
           </li>`;
       });
     } catch (e) {
-      msg('apps-msg', 'Network error: ' + e.message, 'error');
+      msg('apps-msg', 'Network error: ' + esc(e.message), 'error');
     }
-  }
-
-  function csv(str) {
-    return str.split(',').map(s => s.trim()).filter(Boolean);
-  }
-
-  function esc(str) {
-    const d = document.createElement('div');
-    d.textContent = str || '';
-    return d.innerHTML;
   }
 </script>
 </body>
