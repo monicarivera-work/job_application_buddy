@@ -56,13 +56,24 @@ async function extractText(buffer: Buffer, mimetype: string): Promise<string> {
     }
     if (mimetype === 'application/pdf') {
       // Dynamically require to avoid bundler issues
+      // pdf-parse v2 exports a PDFParse class (not a callable function like v1)
       // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const pdfParse = require('pdf-parse') as (buf: Buffer) => Promise<{ text: string }>;
-      const result = await pdfParse(buffer);
-      if (!result.text?.trim()) {
-        throw new ResumeExtractionError('PDF file appears to contain no extractable text (may be image-only)');
+      const { PDFParse } = require('pdf-parse') as {
+        PDFParse: new (opts: { data: Buffer }) => {
+          getText(): Promise<{ text: string }>;
+          destroy(): Promise<void>;
+        };
+      };
+      const parser = new PDFParse({ data: buffer });
+      try {
+        const result = await parser.getText();
+        if (!result.text?.trim()) {
+          throw new ResumeExtractionError('PDF file appears to contain no extractable text (may be image-only)');
+        }
+        return result.text;
+      } finally {
+        await parser.destroy();
       }
-      return result.text;
     }
     if (
       mimetype === 'application/msword' ||
