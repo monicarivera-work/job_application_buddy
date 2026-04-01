@@ -7,6 +7,7 @@ import { profileRoutes } from './routes/profileRoutes';
 import { jobRoutes } from './routes/jobRoutes';
 import { applicationRoutes } from './routes/applicationRoutes';
 import { authRoutes } from './routes/authRoutes';
+import { resumeRoutes } from './routes/resumeRoutes';
 import { requireAuth } from './middleware/authMiddleware';
 
 const app = express();
@@ -40,6 +41,7 @@ app.use('/api/auth', authLimiter, authRoutes);
 app.use('/api/profile', apiLimiter, requireAuth, profileRoutes);
 app.use('/api/jobs', apiLimiter, requireAuth, jobRoutes);
 app.use('/api/applications', apiLimiter, requireAuth, applicationRoutes);
+app.use('/api/resume', apiLimiter, requireAuth, resumeRoutes);
 
 /** Health-check endpoint */
 app.get('/health', (_req, res) => {

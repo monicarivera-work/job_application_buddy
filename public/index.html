@@ -42,7 +42,7 @@
     }
     nav button:hover { background: #2c5282; }
     nav button.active { background: #2b6cb0; color: white; font-weight: 600; }
-    .container { max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
+    .container { max-width: 960px; margin: 2rem auto; padding: 0 1rem; }
     .section { display: none; }
     .section.active { display: block; }
     .card {
@@ -82,6 +82,7 @@
     .btn-success:hover { background: #22543d; }
     .btn-danger { background: #c53030; color: white; }
     .btn-danger:hover { background: #9b2c2c; }
+    .btn-sm { padding: 0.3rem 0.75rem; font-size: 0.8rem; margin-top: 0; }
     .alert {
       padding: 0.75rem 1rem;
       border-radius: 6px;
@@ -198,6 +199,300 @@
     .auth-switch a { color: #2b6cb0; cursor: pointer; text-decoration: underline; }
     .file-hint { font-size: 0.78rem; color: #a0aec0; margin-top: 0.3rem; }
     #app-screen { display: none; }
+
+    /* ── Resume section ── */
+    .resume-upload-zone {
+      border: 2px dashed #cbd5e0;
+      border-radius: 8px;
+      padding: 2rem;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      margin-top: 0.75rem;
+    }
+    .resume-upload-zone:hover, .resume-upload-zone.drag-over {
+      border-color: #4299e1;
+      background: #ebf8ff;
+    }
+    .resume-upload-zone .upload-icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
+    .resume-upload-zone p { color: #718096; font-size: 0.9rem; }
+    .resume-upload-zone input[type=file] { display: none; }
+
+    /* ── Resume builder ── */
+    #resume-builder { display: none; }
+    #resume-builder.visible { display: block; }
+
+    .resume-toolbar {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      align-items: center;
+      padding: 0.75rem 1rem;
+      background: #f7fafc;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+      margin-bottom: 1rem;
+    }
+    .resume-toolbar .toolbar-group {
+      display: flex;
+      gap: 0.4rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .resume-toolbar label { margin: 0; font-size: 0.8rem; color: #718096; min-width: auto; }
+    .resume-toolbar input, .resume-toolbar select {
+      width: auto;
+      padding: 0.3rem 0.5rem;
+      font-size: 0.85rem;
+      border: 1px solid #cbd5e0;
+      border-radius: 4px;
+    }
+    .toolbar-sep { width: 1px; height: 24px; background: #e2e8f0; margin: 0 0.25rem; }
+
+    .sections-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .resume-section-card {
+      background: white;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+      overflow: hidden;
+      transition: box-shadow 0.15s;
+    }
+    .resume-section-card.dragging {
+      opacity: 0.5;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    }
+    .resume-section-card.drag-over-top { border-top: 3px solid #4299e1; }
+    .resume-section-card.drag-over-bottom { border-bottom: 3px solid #4299e1; }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      background: #f7fafc;
+      cursor: grab;
+      user-select: none;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .section-header:active { cursor: grabbing; }
+    .drag-handle { color: #a0aec0; font-size: 1.2rem; flex-shrink: 0; }
+    .section-title-input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: #2d3748;
+      padding: 0;
+    }
+    .section-title-input:focus { outline: none; border-bottom: 1px solid #4299e1; }
+    .section-type-badge {
+      font-size: 0.7rem;
+      background: #ebf8ff;
+      color: #2b6cb0;
+      border-radius: 4px;
+      padding: 0.1rem 0.4rem;
+      flex-shrink: 0;
+    }
+    .section-actions { display: flex; gap: 0.35rem; flex-shrink: 0; }
+    .section-actions button {
+      background: none;
+      border: 1px solid #e2e8f0;
+      border-radius: 4px;
+      padding: 0.25rem 0.5rem;
+      cursor: pointer;
+      font-size: 0.8rem;
+      color: #718096;
+      transition: all 0.15s;
+    }
+    .section-actions button:hover { background: #fff; border-color: #4299e1; color: #2b6cb0; }
+    .section-actions .btn-del:hover { border-color: #fc8181; color: #c53030; }
+
+    .section-body {
+      padding: 0.75rem 1rem;
+    }
+    .section-body textarea {
+      font-family: inherit;
+      min-height: 80px;
+      resize: vertical;
+      border: 1px solid #e2e8f0;
+      border-radius: 4px;
+    }
+    .section-body textarea:focus { border-color: #4299e1; }
+
+    .section-style-panel {
+      display: none;
+      padding: 0.6rem 1rem;
+      background: #f7fafc;
+      border-top: 1px solid #e2e8f0;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .section-style-panel.open { display: flex; }
+    .section-style-panel label { margin: 0; font-size: 0.78rem; color: #718096; min-width: auto; }
+    .section-style-panel input, .section-style-panel select {
+      width: auto;
+      padding: 0.25rem 0.4rem;
+      font-size: 0.82rem;
+    }
+    .style-group { display: flex; align-items: center; gap: 0.4rem; }
+
+    /* ── Snap-to-center helper ── */
+    .snap-center-ghost {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 2px dashed #4299e1;
+      background: rgba(66,153,225,0.05);
+      border-radius: 6px;
+      pointer-events: none;
+      z-index: 100;
+    }
+
+    /* ── Resume preview modal ── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 16px 48px rgba(0,0,0,0.25);
+      width: 100%;
+      max-width: 720px;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .modal-header h3 { font-size: 1.1rem; color: #2b6cb0; }
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.4rem;
+      cursor: pointer;
+      color: #718096;
+      line-height: 1;
+    }
+    .modal-close:hover { color: #2d3748; }
+    .modal-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.5rem;
+    }
+    .modal-footer {
+      padding: 1rem 1.5rem;
+      border-top: 1px solid #e2e8f0;
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    /* ── AI Review ── */
+    .ai-toggle-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+    .toggle-switch {
+      position: relative;
+      width: 40px;
+      height: 22px;
+      flex-shrink: 0;
+    }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider {
+      position: absolute;
+      inset: 0;
+      background: #cbd5e0;
+      border-radius: 22px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .toggle-slider::before {
+      content: '';
+      position: absolute;
+      left: 3px; top: 3px;
+      width: 16px; height: 16px;
+      background: white;
+      border-radius: 50%;
+      transition: transform 0.2s;
+    }
+    .toggle-switch input:checked + .toggle-slider { background: #2b6cb0; }
+    .toggle-switch input:checked + .toggle-slider::before { transform: translateX(18px); }
+
+    .ai-review-result { margin-top: 1rem; }
+    .review-section-item {
+      padding: 0.75rem;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      margin-bottom: 0.75rem;
+    }
+    .review-section-item h4 { font-size: 0.9rem; color: #2b6cb0; margin-bottom: 0.25rem; }
+    .review-score {
+      display: inline-block;
+      font-weight: 700;
+      font-size: 0.85rem;
+      margin-bottom: 0.35rem;
+    }
+    .review-score.high { color: #276749; }
+    .review-score.mid { color: #744210; }
+    .review-score.low { color: #9b2c2c; }
+    .review-suggestions { padding-left: 1.25rem; margin-top: 0.35rem; font-size: 0.85rem; color: #4a5568; }
+    .review-suggestions li { margin-bottom: 0.2rem; }
+
+    /* ── Resume preview in modal ── */
+    .preview-section { margin-bottom: 1.25rem; }
+    .preview-section h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #2b6cb0;
+      border-bottom: 2px solid #2b6cb0;
+      padding-bottom: 0.25rem;
+      margin-bottom: 0.5rem;
+    }
+    .preview-section pre {
+      white-space: pre-wrap;
+      font-family: inherit;
+      font-size: 0.875rem;
+      color: #2d3748;
+    }
+
+    .add-section-form {
+      display: none;
+      padding: 1rem;
+      background: #f7fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      margin-top: 0.75rem;
+      gap: 0.75rem;
+      flex-direction: column;
+    }
+    .add-section-form.open { display: flex; }
+    .add-section-form .form-row { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+    .add-section-form .form-row > * { flex: 1; min-width: 140px; }
   </style>
 </head>
 <body>
@@ -264,6 +559,8 @@
 
     <!-- PROFILE TAB -->
     <div id="tab-profile" class="section active">
+
+      <!-- Basic profile card -->
       <div class="card">
         <h2>Your Profile</h2>
         <div id="profile-msg"></div>
@@ -291,6 +588,84 @@
           <button class="btn btn-primary" onclick="saveProfile()">💾 Save Profile</button>
         </div>
       </div>
+
+      <!-- ── Resume Upload card ── -->
+      <div class="card">
+        <h2>📄 Resume</h2>
+        <div id="resume-upload-msg"></div>
+
+        <div id="resume-upload-area">
+          <div class="resume-upload-zone" id="resume-drop-zone"
+               onclick="document.getElementById('resume-file-input').click()"
+               ondragover="resumeDragOver(event)"
+               ondragleave="resumeDragLeave(event)"
+               ondrop="resumeDrop(event)">
+            <div class="upload-icon">📤</div>
+            <p><strong>Click or drag &amp; drop</strong> your resume here</p>
+            <p style="margin-top:0.25rem">PDF, DOC, DOCX, or TXT · Max 10 MB</p>
+            <input type="file" id="resume-file-input" accept=".pdf,.doc,.docx,.txt" onchange="uploadResume(this.files[0])" />
+          </div>
+          <div id="resume-file-info" style="margin-top:0.6rem;font-size:0.85rem;color:#718096"></div>
+        </div>
+      </div>
+
+      <!-- ── Resume Builder (appears after first upload) ── -->
+      <div id="resume-builder">
+        <div class="card">
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.75rem">
+            <h2 style="margin-bottom:0">🗂️ Resume Builder</h2>
+            <div style="display:flex;gap:0.5rem;flex-wrap:wrap">
+              <button class="btn btn-secondary btn-sm" onclick="openPreviewModal()">👁️ Preview</button>
+              <button class="btn btn-secondary btn-sm" onclick="openAiReviewModal()">🤖 AI Review</button>
+              <button class="btn btn-success btn-sm" onclick="downloadResume('docx')">⬇️ DOCX</button>
+              <button class="btn btn-success btn-sm" onclick="downloadResume('pdf')">⬇️ PDF</button>
+            </div>
+          </div>
+
+          <!-- Global toolbar for new sections -->
+          <div style="margin-top:1rem;display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center">
+            <button class="btn btn-primary btn-sm" onclick="toggleAddSectionForm()">➕ Add Section</button>
+            <button class="btn btn-secondary btn-sm" onclick="uploadResume(null, true)">🔄 Re-upload Resume</button>
+            <span style="font-size:0.78rem;color:#a0aec0;margin-left:0.5rem">Drag sections to reorder · snap-aligns to center</span>
+          </div>
+
+          <!-- Add-section form -->
+          <div class="add-section-form" id="add-section-form">
+            <div class="form-row">
+              <div>
+                <label style="margin-top:0">Section Title</label>
+                <input type="text" id="new-section-title" placeholder="e.g. Open Source Contributions" />
+              </div>
+              <div>
+                <label style="margin-top:0">Type</label>
+                <select id="new-section-type">
+                  <option value="custom">Custom</option>
+                  <option value="summary">Summary</option>
+                  <option value="experience">Experience</option>
+                  <option value="education">Education</option>
+                  <option value="skills">Skills</option>
+                  <option value="projects">Projects</option>
+                  <option value="certifications">Certifications</option>
+                  <option value="contact">Contact</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <label style="margin-top:0">Content</label>
+              <textarea id="new-section-content" placeholder="Section content…" style="min-height:80px"></textarea>
+            </div>
+            <div style="display:flex;gap:0.5rem">
+              <button class="btn btn-primary btn-sm" onclick="addSection()">Add</button>
+              <button class="btn btn-secondary btn-sm" onclick="toggleAddSectionForm()">Cancel</button>
+            </div>
+          </div>
+
+          <div id="resume-builder-msg"></div>
+        </div>
+
+        <!-- Sections list -->
+        <div class="sections-list" id="sections-list"></div>
+      </div>
     </div>
 
     <!-- JOBS TAB -->
@@ -316,19 +691,66 @@
   </div><!-- /.container -->
 </div><!-- /#app-screen -->
 
+<!-- ═══════════════════════════════════════ MODALS ════════════════════════════════════════════ -->
+
+<!-- Preview modal -->
+<div class="modal-overlay" id="preview-modal" onclick="closeModalOnOverlay(event,'preview-modal')">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3>📄 Resume Preview</h3>
+      <button class="modal-close" onclick="closeModal('preview-modal')">×</button>
+    </div>
+    <div class="modal-body" id="preview-modal-body"></div>
+    <div class="modal-footer">
+      <button class="btn btn-success btn-sm" onclick="downloadResume('docx')">⬇️ Download DOCX</button>
+      <button class="btn btn-success btn-sm" onclick="downloadResume('pdf')">⬇️ Download PDF</button>
+      <button class="btn btn-secondary btn-sm" onclick="closeModal('preview-modal')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- AI Review modal -->
+<div class="modal-overlay" id="ai-review-modal" onclick="closeModalOnOverlay(event,'ai-review-modal')">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3>🤖 AI Resume Review (Claude)</h3>
+      <button class="modal-close" onclick="closeModal('ai-review-modal')">×</button>
+    </div>
+    <div class="modal-body">
+      <!-- AI toggle -->
+      <div class="ai-toggle-row">
+        <label class="toggle-switch">
+          <input type="checkbox" id="ai-enabled-toggle" checked onchange="onAiToggle(this)" />
+          <span class="toggle-slider"></span>
+        </label>
+        <span style="font-size:0.9rem">Enable Claude AI Review</span>
+        <span style="font-size:0.78rem;color:#a0aec0;margin-left:0.25rem">(requires ANTHROPIC_API_KEY on server)</span>
+      </div>
+      <div id="ai-disabled-note" style="display:none;font-size:0.85rem;color:#718096;background:#f7fafc;padding:0.6rem;border-radius:6px;margin-bottom:0.75rem">
+        AI review is disabled. Enable the toggle above to request a Claude-powered analysis.
+      </div>
+      <button class="btn btn-primary btn-sm" id="ai-review-run-btn" onclick="runAiReview()">▶ Run AI Review</button>
+      <div class="ai-review-result" id="ai-review-result"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary btn-sm" onclick="closeModal('ai-review-modal')">Close</button>
+    </div>
+  </div>
+</div>
+
 <script>
-  /* ── auth state ── */
+  /* ═══════════════════════════════════════════════════════════════════
+     AUTH STATE
+  ═══════════════════════════════════════════════════════════════════ */
   let _token = null;
   let _userId = null;
   let _userName = null;
-
-  function getToken() { return _token; }
 
   function authHeaders(extra) {
     return Object.assign({ 'Authorization': 'Bearer ' + _token }, extra || {});
   }
 
-  /* ── startup: check localStorage ── */
+  /* ── startup ── */
   (function init() {
     const stored = localStorage.getItem('jab_session');
     if (stored) {
@@ -356,9 +778,7 @@
   async function doLogin() {
     const email = document.getElementById('login-email').value.trim();
     const password = document.getElementById('login-password').value;
-    if (!email || !password) {
-      msg('login-msg', 'Email and password are required.', 'error'); return;
-    }
+    if (!email || !password) { msg('login-msg', 'Email and password are required.', 'error'); return; }
     msg('login-msg', '<span class="spinner"></span> Logging in…', 'info');
     try {
       const res = await fetch('/api/auth/login', {
@@ -380,21 +800,15 @@
     const email = document.getElementById('reg-email').value.trim();
     const password = document.getElementById('reg-password').value;
     const fileInput = document.getElementById('reg-resume');
-    if (!name || !email || !password) {
-      msg('register-msg', 'Name, email, and password are required.', 'error'); return;
-    }
-    if (password.length < 8) {
-      msg('register-msg', 'Password must be at least 8 characters.', 'error'); return;
-    }
+    if (!name || !email || !password) { msg('register-msg', 'Name, email, and password are required.', 'error'); return; }
+    if (password.length < 8) { msg('register-msg', 'Password must be at least 8 characters.', 'error'); return; }
     msg('register-msg', '<span class="spinner"></span> Creating account…', 'info');
     try {
       const form = new FormData();
       form.append('name', name);
       form.append('email', email);
       form.append('password', password);
-      if (fileInput.files.length > 0) {
-        form.append('resume', fileInput.files[0]);
-      }
+      if (fileInput.files.length > 0) form.append('resume', fileInput.files[0]);
       const res = await fetch('/api/auth/register', { method: 'POST', body: form });
       const data = await res.json();
       if (!res.ok) { msg('register-msg', esc(data.error || 'Registration failed'), 'error'); return; }
@@ -417,8 +831,9 @@
     document.getElementById('auth-screen').style.display = 'none';
     document.getElementById('app-screen').style.display = 'block';
     document.getElementById('header-username').textContent = '👤 ' + (_userName || '');
-    // Pre-fill profile name/email from account info if no saved profile
     if (_userName) document.getElementById('profile-name').value = _userName;
+    // Try to load existing resume
+    loadResumeBuilder();
   }
 
   function doLogout() {
@@ -431,7 +846,7 @@
     document.getElementById('login-msg').innerHTML = '';
   }
 
-  /* ── tab navigation (app) ── */
+  /* ── tab navigation ── */
   function showTab(name, event) {
     document.querySelectorAll('#app-screen .section').forEach(s => s.classList.remove('active'));
     document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
@@ -457,13 +872,13 @@
     return str.split(',').map(s => s.trim()).filter(Boolean);
   }
 
-  /* ── profile ── */
+  /* ═══════════════════════════════════════════════════════════════════
+     PROFILE
+  ═══════════════════════════════════════════════════════════════════ */
   async function saveProfile() {
     const name = document.getElementById('profile-name').value.trim();
     const email = document.getElementById('profile-email').value.trim();
-    if (!name || !email) {
-      msg('profile-msg', 'Name and Email are required.', 'error'); return;
-    }
+    if (!name || !email) { msg('profile-msg', 'Name and Email are required.', 'error'); return; }
     const body = {
       id: _userId,
       name,
@@ -498,9 +913,7 @@
   async function loadProfile() {
     loading('profile-msg');
     try {
-      const res = await fetch('/api/profile/' + encodeURIComponent(_userId), {
-        headers: authHeaders(),
-      });
+      const res = await fetch('/api/profile/' + encodeURIComponent(_userId), { headers: authHeaders() });
       if (res.status === 401) { doLogout(); return; }
       if (!res.ok) { msg('profile-msg', 'Profile not found.', 'error'); return; }
       const p = await res.json();
@@ -518,26 +931,521 @@
     }
   }
 
-  /* ── jobs ── */
-  async function discoverJobs() {
-    loading('jobs-msg');
-    document.getElementById('job-list').innerHTML = '';
+  /* ═══════════════════════════════════════════════════════════════════
+     RESUME UPLOAD
+  ═══════════════════════════════════════════════════════════════════ */
+  function resumeDragOver(e) {
+    e.preventDefault();
+    document.getElementById('resume-drop-zone').classList.add('drag-over');
+  }
+  function resumeDragLeave() {
+    document.getElementById('resume-drop-zone').classList.remove('drag-over');
+  }
+  function resumeDrop(e) {
+    e.preventDefault();
+    document.getElementById('resume-drop-zone').classList.remove('drag-over');
+    const file = e.dataTransfer.files[0];
+    if (file) uploadResume(file);
+  }
+
+  async function uploadResume(file, forceReupload) {
+    if (!file && forceReupload) {
+      // trigger file picker
+      document.getElementById('resume-file-input').click();
+      return;
+    }
+    if (!file) return;
+    msg('resume-upload-msg', '<span class="spinner"></span> Uploading and parsing resume…', 'info');
+    document.getElementById('resume-file-info').textContent = '📎 ' + esc(file.name);
+    const form = new FormData();
+    form.append('resume', file);
     try {
-      const res = await fetch('/api/jobs?userId=' + encodeURIComponent(_userId), {
-        headers: authHeaders(),
+      const res = await fetch('/api/resume/upload', {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + _token },
+        body: form,
       });
       if (res.status === 401) { doLogout(); return; }
       if (!res.ok) {
         const err = await res.json();
-        msg('jobs-msg', 'Error: ' + esc(err.error || res.statusText), 'error'); return;
+        msg('resume-upload-msg', '❌ ' + esc(err.error || 'Upload failed'), 'error');
+        return;
       }
+      const data = await res.json();
+      msg('resume-upload-msg', '✅ Resume uploaded and parsed successfully!', 'success');
+      renderResumeBuilder(data);
+    } catch (e) {
+      msg('resume-upload-msg', 'Network error: ' + esc(e.message), 'error');
+    }
+  }
+
+  /* ── Load existing resume on app start ── */
+  async function loadResumeBuilder() {
+    try {
+      const res = await fetch('/api/resume', { headers: authHeaders() });
+      if (res.status === 401) { doLogout(); return; }
+      if (res.status === 404) return; // No resume yet – show upload zone
+      if (!res.ok) return;
+      const data = await res.json();
+      renderResumeBuilder(data);
+    } catch (_) { /* ignore */ }
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════
+     RESUME BUILDER — STATE
+  ═══════════════════════════════════════════════════════════════════ */
+  let _resumeSections = []; // [{id, type, title, content, order, style}]
+
+  function renderResumeBuilder(resume) {
+    _resumeSections = (resume.sections || []).slice().sort((a, b) => a.order - b.order);
+    document.getElementById('resume-builder').classList.add('visible');
+    renderSectionsList();
+  }
+
+  function renderSectionsList() {
+    const list = document.getElementById('sections-list');
+    list.innerHTML = '';
+    const sorted = _resumeSections.slice().sort((a, b) => a.order - b.order);
+    sorted.forEach(section => {
+      list.appendChild(buildSectionCard(section));
+    });
+    initDragAndDrop();
+  }
+
+  function buildSectionCard(section) {
+    const card = document.createElement('div');
+    card.className = 'resume-section-card';
+    card.dataset.id = section.id;
+    card.draggable = true;
+
+    // Apply section style to card preview
+    const bodyStyle = buildInlineStyle(section.style);
+
+    card.innerHTML = `
+      <div class="section-header">
+        <span class="drag-handle" title="Drag to reorder">⠿</span>
+        <input class="section-title-input" type="text" value="${esc(section.title)}"
+               onchange="updateSectionTitle('${section.id}', this.value)" />
+        <span class="section-type-badge">${esc(section.type)}</span>
+        <div class="section-actions">
+          <button title="Style" onclick="toggleStylePanel('${section.id}')">🎨</button>
+          <button class="btn-del" title="Delete" onclick="deleteSection('${section.id}')">🗑️</button>
+        </div>
+      </div>
+      <div class="section-body" style="${bodyStyle}">
+        <textarea onchange="updateSectionContent('${section.id}', this.value)">${esc(section.content)}</textarea>
+      </div>
+      <div class="section-style-panel" id="style-panel-${section.id}">
+        ${buildStylePanelHtml(section)}
+      </div>
+    `;
+    return card;
+  }
+
+  function buildInlineStyle(style) {
+    if (!style) return '';
+    const parts = [];
+    if (style.fontFamily) parts.push(`font-family:${esc(style.fontFamily)}`);
+    if (style.fontSize)   parts.push(`font-size:${style.fontSize}px`);
+    if (style.color)      parts.push(`color:${esc(style.color)}`);
+    if (style.backgroundColor) parts.push(`background-color:${esc(style.backgroundColor)}`);
+    if (style.textAlign)  parts.push(`text-align:${esc(style.textAlign)}`);
+    if (style.bold)       parts.push('font-weight:700');
+    if (style.italic)     parts.push('font-style:italic');
+    return parts.join(';');
+  }
+
+  function buildStylePanelHtml(section) {
+    const s = section.style || {};
+    return `
+      <div class="style-group">
+        <label>Font</label>
+        <select onchange="updateSectionStyle('${section.id}','fontFamily',this.value)">
+          ${['Calibri','Arial','Georgia','Times New Roman','Courier New','Verdana']
+            .map(f => `<option${s.fontFamily===f?' selected':''}>${f}</option>`).join('')}
+        </select>
+      </div>
+      <div class="style-group">
+        <label>Size</label>
+        <input type="number" min="8" max="32" value="${s.fontSize||11}" style="width:56px"
+               onchange="updateSectionStyle('${section.id}','fontSize',Number(this.value))" />
+      </div>
+      <div class="style-group">
+        <label>Color</label>
+        <input type="color" value="${s.color||'#2d3748'}" style="width:36px;height:28px;padding:2px"
+               onchange="updateSectionStyle('${section.id}','color',this.value)" />
+      </div>
+      <div class="style-group">
+        <label>BG</label>
+        <input type="color" value="${s.backgroundColor||'#ffffff'}" style="width:36px;height:28px;padding:2px"
+               onchange="updateSectionStyle('${section.id}','backgroundColor',this.value)" />
+      </div>
+      <div class="style-group">
+        <label>Align</label>
+        <select onchange="updateSectionStyle('${section.id}','textAlign',this.value)">
+          ${['left','center','right'].map(a => `<option value="${a}"${s.textAlign===a?' selected':''}>${a}</option>`).join('')}
+        </select>
+      </div>
+      <div class="style-group">
+        <label><input type="checkbox" ${s.bold?'checked':''} onchange="updateSectionStyle('${section.id}','bold',this.checked)" /> Bold</label>
+      </div>
+      <div class="style-group">
+        <label><input type="checkbox" ${s.italic?'checked':''} onchange="updateSectionStyle('${section.id}','italic',this.checked)" /> Italic</label>
+      </div>
+    `;
+  }
+
+  function toggleStylePanel(id) {
+    const panel = document.getElementById('style-panel-' + id);
+    if (panel) panel.classList.toggle('open');
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════
+     SECTION CRUD
+  ═══════════════════════════════════════════════════════════════════ */
+  async function updateSectionTitle(id, value) {
+    await patchSection(id, { title: value });
+  }
+
+  async function updateSectionContent(id, value) {
+    await patchSection(id, { content: value });
+  }
+
+  async function updateSectionStyle(id, key, value) {
+    const section = _resumeSections.find(s => s.id === id);
+    if (!section) return;
+    const style = { ...(section.style || {}), [key]: value };
+    await patchSection(id, { style });
+    // Re-render just the body style and style panel
+    const card = document.querySelector(`.resume-section-card[data-id="${id}"]`);
+    if (card) {
+      const body = card.querySelector('.section-body');
+      if (body) body.style.cssText = buildInlineStyle(style);
+    }
+  }
+
+  async function patchSection(id, updates) {
+    const idx = _resumeSections.findIndex(s => s.id === id);
+    if (idx === -1) return;
+    _resumeSections[idx] = { ..._resumeSections[idx], ...updates };
+    try {
+      const res = await fetch('/api/resume/sections/' + encodeURIComponent(id), {
+        method: 'PUT',
+        headers: authHeaders({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify(_resumeSections[idx]),
+      });
+      if (res.status === 401) { doLogout(); return; }
+      if (!res.ok) {
+        const err = await res.json();
+        msg('resume-builder-msg', '❌ ' + esc(err.error || 'Save failed'), 'error');
+      }
+    } catch (e) {
+      msg('resume-builder-msg', 'Network error: ' + esc(e.message), 'error');
+    }
+  }
+
+  async function deleteSection(id) {
+    if (!confirm('Delete this section?')) return;
+    try {
+      const res = await fetch('/api/resume/sections/' + encodeURIComponent(id), {
+        method: 'DELETE',
+        headers: authHeaders(),
+      });
+      if (res.status === 401) { doLogout(); return; }
+      if (!res.ok) { const err = await res.json(); msg('resume-builder-msg', '❌ ' + esc(err.error), 'error'); return; }
+      _resumeSections = _resumeSections.filter(s => s.id !== id);
+      renderSectionsList();
+      msg('resume-builder-msg', '✅ Section deleted.', 'success');
+    } catch (e) {
+      msg('resume-builder-msg', 'Network error: ' + esc(e.message), 'error');
+    }
+  }
+
+  function toggleAddSectionForm() {
+    document.getElementById('add-section-form').classList.toggle('open');
+  }
+
+  async function addSection() {
+    const title = document.getElementById('new-section-title').value.trim();
+    const type = document.getElementById('new-section-type').value;
+    const content = document.getElementById('new-section-content').value;
+    if (!title) { alert('Title is required.'); return; }
+    try {
+      const res = await fetch('/api/resume/sections', {
+        method: 'POST',
+        headers: authHeaders({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify({ title, type, content }),
+      });
+      if (res.status === 401) { doLogout(); return; }
+      if (!res.ok) { const err = await res.json(); msg('resume-builder-msg', '❌ ' + esc(err.error), 'error'); return; }
+      const newSection = await res.json();
+      _resumeSections.push(newSection);
+      renderSectionsList();
+      document.getElementById('new-section-title').value = '';
+      document.getElementById('new-section-content').value = '';
+      document.getElementById('add-section-form').classList.remove('open');
+      msg('resume-builder-msg', '✅ Section added.', 'success');
+    } catch (e) {
+      msg('resume-builder-msg', 'Network error: ' + esc(e.message), 'error');
+    }
+  }
+
+  /* ── Persist reordered sections ── */
+  async function saveReorderedSections() {
+    try {
+      const res = await fetch('/api/resume/sections', {
+        method: 'PUT',
+        headers: authHeaders({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify({ sections: _resumeSections }),
+      });
+      if (res.status === 401) { doLogout(); return; }
+      if (!res.ok) msg('resume-builder-msg', '❌ Reorder save failed', 'error');
+    } catch (e) {
+      msg('resume-builder-msg', 'Network error: ' + esc(e.message), 'error');
+    }
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════
+     DRAG-AND-DROP REORDERING WITH SNAP-TO-CENTER
+  ═══════════════════════════════════════════════════════════════════ */
+  let _dragSrcId = null;
+  let _snapGhost = null;
+
+  function initDragAndDrop() {
+    const list = document.getElementById('sections-list');
+
+    list.querySelectorAll('.resume-section-card').forEach(card => {
+      card.addEventListener('dragstart', onDragStart);
+      card.addEventListener('dragend',   onDragEnd);
+      card.addEventListener('dragover',  onDragOver);
+      card.addEventListener('dragleave', onDragLeave);
+      card.addEventListener('drop',      onDrop);
+    });
+  }
+
+  function onDragStart(e) {
+    _dragSrcId = this.dataset.id;
+    this.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+    createSnapGhost(this);
+  }
+
+  function onDragEnd() {
+    this.classList.remove('dragging');
+    removeSnapGhost();
+    document.querySelectorAll('.resume-section-card').forEach(c => {
+      c.classList.remove('drag-over-top', 'drag-over-bottom');
+    });
+  }
+
+  function onDragOver(e) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    const rect = this.getBoundingClientRect();
+    const midY = rect.top + rect.height / 2;
+    this.classList.remove('drag-over-top', 'drag-over-bottom');
+    this.classList.add(e.clientY < midY ? 'drag-over-top' : 'drag-over-bottom');
+
+    // Snap-to-center ghost: if card is within ±30px of container center, show snapped indicator
+    const container = document.getElementById('sections-list');
+    const containerRect = container.getBoundingClientRect();
+    const cardCentreX = rect.left + rect.width / 2;
+    const containerCentreX = containerRect.left + containerRect.width / 2;
+    if (Math.abs(cardCentreX - containerCentreX) < 30) {
+      positionSnapGhost(this, containerRect);
+    } else {
+      removeSnapGhost();
+    }
+  }
+
+  function onDragLeave() {
+    this.classList.remove('drag-over-top', 'drag-over-bottom');
+  }
+
+  function onDrop(e) {
+    e.preventDefault();
+    if (!_dragSrcId || _dragSrcId === this.dataset.id) return;
+
+    const rect = this.getBoundingClientRect();
+    const midY = rect.top + rect.height / 2;
+    const insertBefore = e.clientY < midY;
+
+    const srcIdx = _resumeSections.findIndex(s => s.id === _dragSrcId);
+    const tgtIdx = _resumeSections.findIndex(s => s.id === this.dataset.id);
+    if (srcIdx === -1 || tgtIdx === -1) return;
+
+    const sorted = _resumeSections.slice().sort((a, b) => a.order - b.order);
+    const srcSorted = sorted.findIndex(s => s.id === _dragSrcId);
+    const tgtSorted = sorted.findIndex(s => s.id === this.dataset.id);
+
+    // Remove src and insert relative to target
+    const [moved] = sorted.splice(srcSorted, 1);
+    const insertAt = insertBefore ? tgtSorted : tgtSorted + (srcSorted < tgtSorted ? 0 : 1);
+    sorted.splice(Math.min(insertAt, sorted.length), 0, moved);
+
+    // Re-assign orders
+    sorted.forEach((s, i) => { s.order = i; });
+    _resumeSections = sorted;
+
+    renderSectionsList();
+    saveReorderedSections();
+  }
+
+  function createSnapGhost(card) {
+    removeSnapGhost();
+    _snapGhost = document.createElement('div');
+    _snapGhost.className = 'snap-center-ghost';
+    _snapGhost.style.width = card.offsetWidth + 'px';
+    _snapGhost.style.height = card.offsetHeight + 'px';
+    _snapGhost.style.top = card.offsetTop + 'px';
+    document.getElementById('sections-list').style.position = 'relative';
+    document.getElementById('sections-list').appendChild(_snapGhost);
+  }
+
+  function positionSnapGhost(card, containerRect) {
+    if (_snapGhost) {
+      _snapGhost.style.width = card.offsetWidth + 'px';
+      _snapGhost.style.height = card.offsetHeight + 'px';
+    }
+  }
+
+  function removeSnapGhost() {
+    if (_snapGhost) {
+      _snapGhost.remove();
+      _snapGhost = null;
+    }
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════
+     RESUME PREVIEW MODAL
+  ═══════════════════════════════════════════════════════════════════ */
+  function openPreviewModal() {
+    const body = document.getElementById('preview-modal-body');
+    body.innerHTML = '';
+    const sorted = _resumeSections.slice().sort((a, b) => a.order - b.order);
+    sorted.forEach(s => {
+      const div = document.createElement('div');
+      div.className = 'preview-section';
+      const style = buildInlineStyle(s.style);
+      div.innerHTML = `
+        <h3 style="${style}">${esc(s.title)}</h3>
+        <pre style="${style}">${esc(s.content)}</pre>
+      `;
+      body.appendChild(div);
+    });
+    openModal('preview-modal');
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════
+     AI REVIEW MODAL
+  ═══════════════════════════════════════════════════════════════════ */
+  let _aiEnabled = true;
+
+  function onAiToggle(checkbox) {
+    _aiEnabled = checkbox.checked;
+    document.getElementById('ai-disabled-note').style.display = _aiEnabled ? 'none' : 'block';
+    document.getElementById('ai-review-run-btn').disabled = !_aiEnabled;
+  }
+
+  async function runAiReview() {
+    if (!_aiEnabled) return;
+    const resultEl = document.getElementById('ai-review-result');
+    resultEl.innerHTML = '<div class="alert alert-info"><span class="spinner"></span> Running AI review…</div>';
+    try {
+      const res = await fetch('/api/resume/ai-review', {
+        method: 'POST',
+        headers: authHeaders({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify({}),
+      });
+      if (res.status === 401) { doLogout(); return; }
+      const data = await res.json();
+      if (!res.ok) {
+        resultEl.innerHTML = `<div class="alert alert-error">${esc(data.error || 'Review failed')}</div>`;
+        return;
+      }
+      renderAiReview(data.review || data.raw);
+    } catch (e) {
+      resultEl.innerHTML = `<div class="alert alert-error">Network error: ${esc(e.message)}</div>`;
+    }
+  }
+
+  function renderAiReview(review) {
+    const el = document.getElementById('ai-review-result');
+    if (typeof review === 'string') {
+      el.innerHTML = `<pre style="white-space:pre-wrap;font-size:0.85rem">${esc(review)}</pre>`;
+      return;
+    }
+    if (!Array.isArray(review)) { el.innerHTML = '<p>No review data.</p>'; return; }
+    el.innerHTML = review.map(item => {
+      const score = item.score || 0;
+      const scoreClass = score >= 8 ? 'high' : score >= 5 ? 'mid' : 'low';
+      const suggestions = Array.isArray(item.suggestions)
+        ? `<ul class="review-suggestions">${item.suggestions.map(s => `<li>${esc(s)}</li>`).join('')}</ul>`
+        : '';
+      return `
+        <div class="review-section-item">
+          <h4>${esc(item.sectionTitle || 'Section')}</h4>
+          <span class="review-score ${scoreClass}">Score: ${score}/10</span>
+          <p style="font-size:0.85rem;color:#4a5568">${esc(item.feedback || '')}</p>
+          ${suggestions}
+        </div>`;
+    }).join('');
+  }
+
+  function openAiReviewModal() {
+    document.getElementById('ai-review-result').innerHTML = '';
+    openModal('ai-review-modal');
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════
+     DOWNLOAD
+  ═══════════════════════════════════════════════════════════════════ */
+  async function downloadResume(format) {
+    try {
+      const res = await fetch('/api/resume/download', {
+        method: 'POST',
+        headers: authHeaders({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify({ format }),
+      });
+      if (res.status === 401) { doLogout(); return; }
+      if (!res.ok) {
+        const err = await res.json();
+        alert('Download failed: ' + (err.error || res.statusText));
+        return;
+      }
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'resume.' + format;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      alert('Download error: ' + e.message);
+    }
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════
+     MODAL HELPERS
+  ═══════════════════════════════════════════════════════════════════ */
+  function openModal(id) { document.getElementById(id).classList.add('open'); }
+  function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+  function closeModalOnOverlay(e, id) { if (e.target.id === id) closeModal(id); }
+
+  /* ═══════════════════════════════════════════════════════════════════
+     JOBS
+  ═══════════════════════════════════════════════════════════════════ */
+  async function discoverJobs() {
+    loading('jobs-msg');
+    document.getElementById('job-list').innerHTML = '';
+    try {
+      const res = await fetch('/api/jobs?userId=' + encodeURIComponent(_userId), { headers: authHeaders() });
+      if (res.status === 401) { doLogout(); return; }
+      if (!res.ok) { const err = await res.json(); msg('jobs-msg', 'Error: ' + esc(err.error || res.statusText), 'error'); return; }
       const jobs = await res.json();
       msg('jobs-msg', `Found ${jobs.length} matching job(s).`, 'success');
       const list = document.getElementById('job-list');
-      if (!jobs.length) {
-        list.innerHTML = '<li><div class="empty-state">No jobs found. Make sure your profile has preferences set.</div></li>';
-        return;
-      }
+      if (!jobs.length) { list.innerHTML = '<li><div class="empty-state">No jobs found. Make sure your profile has preferences set.</div></li>'; return; }
       jobs.forEach(j => {
         const pct = Math.round((j.score || 0) * 100);
         const skills = (j.job?.requiredSkills || []).slice(0, 5);
@@ -557,26 +1465,20 @@
     }
   }
 
-  /* ── applications ── */
+  /* ═══════════════════════════════════════════════════════════════════
+     APPLICATIONS
+  ═══════════════════════════════════════════════════════════════════ */
   async function loadApplications() {
     loading('apps-msg');
     document.getElementById('app-list').innerHTML = '';
     try {
-      const res = await fetch('/api/applications?userId=' + encodeURIComponent(_userId), {
-        headers: authHeaders(),
-      });
+      const res = await fetch('/api/applications?userId=' + encodeURIComponent(_userId), { headers: authHeaders() });
       if (res.status === 401) { doLogout(); return; }
-      if (!res.ok) {
-        const err = await res.json();
-        msg('apps-msg', 'Error: ' + esc(err.error || res.statusText), 'error'); return;
-      }
+      if (!res.ok) { const err = await res.json(); msg('apps-msg', 'Error: ' + esc(err.error || res.statusText), 'error'); return; }
       const apps = await res.json();
       msg('apps-msg', `Found ${apps.length} application(s).`, 'success');
       const list = document.getElementById('app-list');
-      if (!apps.length) {
-        list.innerHTML = '<li><div class="empty-state">No applications yet.</div></li>';
-        return;
-      }
+      if (!apps.length) { list.innerHTML = '<li><div class="empty-state">No applications yet.</div></li>'; return; }
       apps.forEach(a => {
         const status = a.status || 'pending';
         list.innerHTML += `
