@@ -12,4 +12,5 @@ export const config = {
   jwtSecret: jwtSecret || 'change-me-in-production',
   azureStorageConnectionString: process.env.AZURE_STORAGE_CONNECTION_STRING || '',
   azureStorageContainerName: process.env.AZURE_STORAGE_CONTAINER_NAME || 'uploads',
+  appInsightsConnectionString: process.env.APPLICATIONINSIGHTS_CONNECTION_STRING || '',
 };
